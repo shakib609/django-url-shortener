@@ -4,7 +4,8 @@
 {% block page_content %}
     <div class="page-header">
         <h1>URL-Shortener</h1>
-        <form class="" action="" method="post">
+        <form class="" action="{% url 'shortener:form_handler' %}" method="post">
+            {% csrf_token %}
             <div class="form-group">
                 <label for="url">URL</label>
                 {% render_field form.url class="form-control" required="" id="url"%}
