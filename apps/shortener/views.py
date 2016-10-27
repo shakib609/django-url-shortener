@@ -2,11 +2,13 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.core.urlresolvers import reverse
 
+from .forms import ShortURLForm
 from .models import ShortURL
 
 
 def homepage(request):
-    return render(request, 'shortener/homepage.html', {})
+    form = ShortURLForm()
+    return render(request, 'shortener/homepage.html', {'form': form})
 
 
 def short_url_redir(request, short_url):
