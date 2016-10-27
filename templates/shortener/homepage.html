@@ -1,14 +1,15 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 {% load widget_tweaks %}
 
 {% block page_content %}
     <div class="page-header">
         <h1>URL-Shortener</h1>
-        <form class="" action="{% url 'shortener:form_handler' %}" method="post">
+        <form id="form" action="{% url 'shortener:form_handler' %}" method="post">
             {% csrf_token %}
             <div class="form-group">
                 <label for="url">URL</label>
-                {% render_field form.url class="form-control" required="" id="url"%}
+                {% render_field form.url type="text" class="form-control" required="" id="url"%}
             </div>
             <div class="form-group">
                 <label for="short-url">Preferred Shortened URL(Optional)</label>
@@ -19,4 +20,9 @@
             </div>
         </form>
     </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="{% static 'js/form.js' %}"></script>
 {% endblock %}
