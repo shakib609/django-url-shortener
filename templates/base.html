@@ -63,7 +63,9 @@
                                 aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
                         </button>
-                        {{ message }}
+                        {% autoescape off %}
+                            {{ message }}
+                        {% endautoescape %}
                     </div>
                     {% endfor %}
                 {% endif %}
