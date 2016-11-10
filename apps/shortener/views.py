@@ -6,11 +6,7 @@ from django.views.decorators.http import require_POST
 
 from .forms import ShortURLForm
 from .models import ShortURL
-
-
-CHARACTERS = list(
-    map(chr, range(97, 123))) + list(
-        map(chr, range(65, 91))) + list(map(str, range(0, 10)))
+from .helpers import shorten_url
 
 
 def homepage(request):
@@ -44,17 +40,3 @@ def short_url_redir(request, short_url):
     else:
         messages.error(request, 'Sorry! The short url doesn\'t exist.')
         return redirect(reverse('shortener:homepage'))
-
-
-def shorten_url(pk):
-    pk = int(pk)
-    digits = []
-    while pk > 0:
-        digit = int(pk % 62)
-        digits.append(digit)
-        pk = int(pk // 62)
-    digits.reverse()
-    result = ''
-    for digit in digits:
-        result += CHARACTERS[digit]
-    return result
