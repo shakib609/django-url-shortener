@@ -38,8 +38,6 @@ def short_url_redir(request, short_url):
     else:
         messages.error(request, 'Sorry! The short url doesn\'t exist.')
         return redirect(reverse('shortener:homepage'))
-<<<<<<< HEAD
-=======
 
 
 def create_from_form_or_api(request, url):
@@ -51,4 +49,3 @@ def create_from_form_or_api(request, url):
     s_url = ShortURL.objects.create(url=url, short_url=shorten_url(i))
     domain = 'http://' + request.get_host() + '/' + s_url.short_url
     return s_url, domain
->>>>>>> new_branch
