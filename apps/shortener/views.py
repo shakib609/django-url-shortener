@@ -3,10 +3,15 @@ from django.contrib import messages
 from django.core.urlresolvers import reverse
 from django.views.decorators.http import require_POST
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+
 
 from .forms import ShortURLForm
 from .models import ShortURL
 from .tools import shorten_url
+from .serializers import ShortURLSerializer
 
 
 def homepage(request):
@@ -17,17 +22,17 @@ def homepage(request):
         {'form': form, 'domain': domain})
 
 
-@require_POST
-def form_handler(request):
-    form = ShortURLForm(request.POST)
-    if form.is_valid():
-        url = form.cleaned_data['url']
-        s_url, domain = create_from_form_or_api(request, url)
-        messages.success(
-            request, '''URL Shortened successfully!
-            <br/>Share this link: <a href="{0}">{0}</a>'''.format(domain)
-        )
-        return redirect(reverse('shortener:homepage'))
+@api_view(['POST'])
+def create_short_url(request):
+    url = request.data.get('url')
+    short_url = shorten_url(get_next_id())
+    data = {'url': url, 'short_url': short_url}
+    serializer = ShortURLSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+    else:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 def short_url_redir(request, short_url):
@@ -40,12 +45,10 @@ def short_url_redir(request, short_url):
         return redirect(reverse('shortener:homepage'))
 
 
-def create_from_form_or_api(request, url):
+def get_next_id():
     i = ShortURL.objects.last()
     if i is None:
         i = 1
     else:
         i = i.id + 1
-    s_url = ShortURL.objects.create(url=url, short_url=shorten_url(i))
-    domain = 'http://' + request.get_host() + '/' + s_url.short_url
-    return s_url, domain
+    return i

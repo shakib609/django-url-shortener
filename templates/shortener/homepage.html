@@ -5,8 +5,7 @@
 {% block page_content %}
     <div class="page-header">
         <h1>URL-Shortener</h1>
-        <form id="form" action="{% url 'shortener:form_handler' %}" method="post">
-            {% csrf_token %}
+        <form id="form" action="{% url 'shortener:create_short_url_api' %}" method="post">
             <div class="form-group">
                 <label for="url">URL</label>
                 {% render_field form.url type="text" class="form-control" required="" id="url"%}
@@ -15,7 +14,13 @@
                 <input type="submit" value="Create" class="btn btn-primary">
             </div>
         </form>
+        <p class="text-success">
+                URL shortened successfully! <br>
+                <a href="{{ domain }}" id="surl">{{ domain }}</a>
+        </p>
+        <p class="text-danger"><b>Invalid URL!</b></p>
     </div>
+
 {% endblock %}
 
 {% block scripts %}

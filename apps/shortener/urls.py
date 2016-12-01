@@ -10,9 +10,9 @@ urlpatterns = [
     ),
 
     url(
-        r'^shorten/$',
-        views.form_handler,
-        name='form_handler'
+        r'^api/$',
+        views.create_short_url,
+        name='create_short_url_api'
     ),
 
     url(
