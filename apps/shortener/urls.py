@@ -10,7 +10,7 @@ urlpatterns = [
     ),
 
     url(
-        r'^shorten$',
+        r'^shorten/$',
         views.form_handler,
         name='form_handler'
     ),

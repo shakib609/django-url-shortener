@@ -6,11 +6,7 @@ from django.views.decorators.http import require_POST
 
 from .forms import ShortURLForm
 from .models import ShortURL
-
-
-CHARACTERS = list(
-    map(chr, range(97, 123))) + list(
-        map(chr, range(65, 91))) + list(map(str, range(0, 10)))
+from .tools import shorten_url
 
 
 def homepage(request):
@@ -26,13 +22,11 @@ def form_handler(request):
     form = ShortURLForm(request.POST)
     if form.is_valid():
         url = form.cleaned_data['url']
-        s_url = ShortURL.objects.create(url=url)
-        shortened_url = shorten_url(s_url.id)
-        s_url.short_url = shortened_url
-        s_url.save()
-        domain = 'http://' + request.get_host() + '/' + s_url.short_url
-        messages.success(request, '''URL Shortened successfully!
-        <br/>Share this link: <a href="{0}">{0}</a>'''.format(domain))
+        s_url, domain = create_from_form_or_api(request, url)
+        messages.success(
+            request, '''URL Shortened successfully!
+            <br/>Share this link: <a href="{0}">{0}</a>'''.format(domain)
+        )
         return redirect(reverse('shortener:homepage'))
 
 
@@ -46,15 +40,12 @@ def short_url_redir(request, short_url):
         return redirect(reverse('shortener:homepage'))
 
 
-def shorten_url(pk):
-    pk = int(pk)
-    digits = []
-    while pk > 0:
-        digit = int(pk % 62)
-        digits.append(digit)
-        pk = int(pk // 62)
-    digits.reverse()
-    result = ''
-    for digit in digits:
-        result += CHARACTERS[digit]
-    return result
+def create_from_form_or_api(request, url):
+    i = ShortURL.objects.last()
+    if i is None:
+        i = 1
+    else:
+        i = i.id + 1
+    s_url = ShortURL.objects.create(url=url, short_url=shorten_url(i))
+    domain = 'http://' + request.get_host() + '/' + s_url.short_url
+    return s_url, domain
