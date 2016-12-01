@@ -28,7 +28,7 @@ $(document).ready(function() {
             data: {"url": url_val},
             method: 'POST',
             success: function(data, status, jqXHR) {
-                new_url = surl_default + '/' + data.short_url;
+                new_url = surl_default + '/' + data.short_url + '/';
                 surl.text(new_url);
                 surl.attr('href', new_url);
                 url.parent('.form-group').addClass('has-success');

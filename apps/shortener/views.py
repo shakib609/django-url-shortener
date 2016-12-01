@@ -15,7 +15,7 @@ from .serializers import ShortURLSerializer
 
 
 def homepage(request):
-    domain = request.get_host()
+    domain = 'http://' + request.get_host()
     form = ShortURLForm()
     return render(
         request, 'shortener/homepage.html',

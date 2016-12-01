@@ -16,7 +16,7 @@ urlpatterns = [
     ),
 
     url(
-        r'^(?P<short_url>[\w_\-\d]+)$',
+        r'^(?P<short_url>[\w_\-\d]+)/$',
         views.short_url_redir,
         name='short_url_redir'
     ),
