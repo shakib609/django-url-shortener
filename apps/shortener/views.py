@@ -6,7 +6,7 @@ from django.views.decorators.http import require_POST
 
 from .forms import ShortURLForm
 from .models import ShortURL
-from .helpers import shorten_url
+from .tools import shorten_url
 
 
 def homepage(request):
@@ -22,13 +22,11 @@ def form_handler(request):
     form = ShortURLForm(request.POST)
     if form.is_valid():
         url = form.cleaned_data['url']
-        s_url = ShortURL.objects.create(url=url)
-        shortened_url = shorten_url(s_url.id)
-        s_url.short_url = shortened_url
-        s_url.save()
-        domain = 'http://' + request.get_host() + '/' + s_url.short_url
-        messages.success(request, '''URL Shortened successfully!
-        <br/>Share this link: <a href="{0}">{0}</a>'''.format(domain))
+        s_url, domain = create_from_form_or_api(request, url)
+        messages.success(
+            request, '''URL Shortened successfully!
+            <br/>Share this link: <a href="{0}">{0}</a>'''.format(domain)
+        )
         return redirect(reverse('shortener:homepage'))
 
 
@@ -40,3 +38,17 @@ def short_url_redir(request, short_url):
     else:
         messages.error(request, 'Sorry! The short url doesn\'t exist.')
         return redirect(reverse('shortener:homepage'))
+<<<<<<< HEAD
+=======
+
+
+def create_from_form_or_api(request, url):
+    i = ShortURL.objects.last()
+    if i is None:
+        i = 1
+    else:
+        i = i.id + 1
+    s_url = ShortURL.objects.create(url=url, short_url=shorten_url(i))
+    domain = 'http://' + request.get_host() + '/' + s_url.short_url
+    return s_url, domain
+>>>>>>> new_branch
