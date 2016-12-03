@@ -10,7 +10,7 @@ urlpatterns = [
     ),
 
     url(
-        r'^api/$',
+        r'^\*/$',
         views.create_short_url,
         name='create_short_url_api'
     ),

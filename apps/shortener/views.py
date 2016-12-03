@@ -24,9 +24,8 @@ def homepage(request):
 
 @api_view(['POST'])
 def create_short_url(request):
-    url = request.data.get('url')
-    short_url = shorten_url(get_next_id())
-    data = {'url': url, 'short_url': short_url}
+    data = request.data.copy()
+    data['short_url'] = shorten_url(get_next_id())
     serializer = ShortURLSerializer(data=data)
     if serializer.is_valid():
         serializer.save()
@@ -41,7 +40,10 @@ def short_url_redir(request, short_url):
         url = short_urls[0].url
         return redirect(url)
     else:
-        messages.error(request, 'Sorry! The short url doesn\'t exist.')
+        messages.error(
+            request,
+            'Sorry! The short url doesn\'t exist.',
+            extra_tags='danger')
         return redirect(reverse('shortener:homepage'))
 
 

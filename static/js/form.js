@@ -1,13 +1,14 @@
 $(document).ready(function() {
     // Initializing variables
-    form = $('#form');
-    submit_button = $('.btn.btn-primary');
-    success_text = $('.text-success');
-    error_text = $('.text-danger');
-    surl = $('#surl');
-    surl_default = surl.text();
-    url = $('#url');
-    protocolRegex = /^https{0,1}:\/\//i;
+    var form = $('#form'),
+        submit_button = $('.btn.btn-primary'),
+        success_text = $('.text-success'),
+        error_text = $('.text-danger'),
+        surl = $('#surl'),
+        surl_default = surl.text(),
+        url = $('#url'),
+        csrf = $('input[name="csrfmiddlewaretoken"]'),
+        protocolRegex = /^https{0,1}:\/\//i;
 
     // handling form submission
     form.submit(function(e) {
@@ -16,7 +17,8 @@ $(document).ready(function() {
         error_text.hide();
         url.parent('.form-group').removeClass('has-error has-success')
         submit_button.attr('value', 'Creating...');
-        url_val = url.val();
+        var url_val = url.val(),
+            csrf_val = csrf.val();
         if (!protocolRegex.test(url_val)) {
             url_val = 'https://' + url_val;
             url.val(url_val);
@@ -24,8 +26,8 @@ $(document).ready(function() {
 
         $.ajax({
             dataType: "json",
-            url: '/api/',
-            data: {"url": url_val},
+            url: '/*/',
+            data: {"url": url_val, "csrfmiddlewaretoken": csrf_val},
             method: 'POST',
             success: function(data, status, jqXHR) {
                 new_url = surl_default + '/' + data.short_url + '/';
